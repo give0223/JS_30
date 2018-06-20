@@ -27,6 +27,29 @@ h1{
 
 }
 
+.hole{
+  flex: 1 0 33.33%;
+  position: relative;
+}
+
+.hole:after{
+  display: block;
+  background: url('./pool_water.jpg') bottom center no-repeat;
+  background-size: contain;
+  content: '';
+  width: 100%;
+  height: 70px;
+  position: absolute;
+  z-index: 2;
+  bottom: -30px;
+}
+
 .mole{
-  background: url('./Github_img.png');
+  background: url('./Github_img.png') bottom center no-repeat;
+  background-size: 60%;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  height: 100%;
+  transition: all 0.4s;
 }
