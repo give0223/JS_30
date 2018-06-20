@@ -1,0 +1,32 @@
+html{
+  font-size: 20px;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1{
+  text-align: center;
+  font-size: 10rem;
+}
+
+.score{
+  background-color:rgba(0,0,0,0.1);
+  padding: 0 10px;
+  border-radius: 5px;
+}
+
+.game{
+  width: 600px;
+  height: 400px;
+  display: flex;
+  flex-wrap: wrap;
+
+}
+
+.mole{
+  background: url('./Github_img.png');
+}
