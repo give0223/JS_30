@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Type Ahead 👀</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <form class="search-form">
@@ -14,9 +16,62 @@
       <li>or a state</li>
     </ul>
   </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <script>
+    const endpoint =
+      'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
-</script>
-  </body>
+    let cities = [];
+
+    //fetch ES6
+    // fetch(endpoint).then(function (res) {
+    //   res.json().then(function (obj) {
+    //     console.log(obj);
+    //   })
+    // })
+
+    //jQuery
+    $.ajax({
+      url: endpoint
+    }).done(function (res) {
+      // console.log(JSON.parse(res));
+      cities = JSON.parse(res);
+    })
+
+    //keydown=會有重複觸發的事件, change=不會即時更新輸入資料
+    //所以選擇使用keyup
+    document.querySelector('.search').addEventListener('keyup', function () {
+      let filterText = this.value.trim();
+
+      let regexp = new RegExp(filterText, 'gi');
+
+      let filterAry = cities.filter(function (city) {
+        return city.city.match(regexp) || city.state.match(regexp);
+      });
+      let searchResult = document.querySelector('.suggestions');
+      // console.log(filterAry)
+      //如果輸入欄不是空值or有搜尋到資料
+      if (filterText && filterAry) {
+        let html = filterAry.map(function (city) {
+          let cityName = city.city.replace(regexp, `<span class="hl">${filterText}</span>`);
+          let stateName = city.state.replace(regexp, `<span class"hl">${filterText}</span>`);
+          let popNum = parseInt(city.population, 10).toLocaleString();
+          return `
+            <li>
+              <span class="name">${cityName}, ${stateName}</span>
+              <span class="population">${popNum}</span>
+            </li>
+          `;
+        }).join('');
+        searchResult.innerHTML = html;
+      } else {
+        searchResult.innerHTML = `
+          <li>Filter for a city</li>
+            <li>or a state</li>
+        `;
+      }
+    });
+  </script>
+</body>
+
 </html>
