@@ -159,14 +159,46 @@
     }
 
     //Vincent Code-Start
+    
+    //throttle【節流概念,事件結束or更新時間後必定做一次】
+    //fun:傳入function, wait:基本更新頻率, limit:最大必須更新時間, immediate:是否先執行
+    function throttle(fun,{wait = 1000/30, limit = 200, immediate = false}) {
+      let timer;//計時器
+      let startTime = null; //起始時間
+
+      return function () {
+        let context = this;
+        let args = arguments;//參數
+        let currentTime = new Date().getTime();//當前時間
+        
+        if(startTime === null){
+          if(!immediate){
+            startTime = currentTime;
+          }else{
+            startTime = currentTime - limit;
+          }
+        }
+
+        let waitfun = function () {
+          fun.apply(context, args);
+          startTime = null;
+        }
+
+        clearTimeout(timer);
+
+        //如果有給最大更新時間&現在時間-起始時間>=最大更新時間
+        if (limit&&currentTime - startTime >= limit){
+          fun.apply(context,args);
+          startTime = currentTime;
+        }else{
+          timer = setTimeout(waitfun,wait)
+        }
+      }
+    }
+    
     let btns = Array.from(document.querySelectorAll('#nav > a'));
     let imgs = Array.from(document.querySelectorAll('img'));
     let imgY = null;//圖片的座標
-
-    //監聽Nav上每個按鈕點擊事件
-    btns.forEach(function (btn) {
-      btn.addEventListener('click', setScroll);
-    });
 
     //Step1***取得目前圖片的位置***
     function setScroll() {
@@ -190,11 +222,7 @@
       //持續呼叫動畫執行
       requestAnimationFrame(render);
     }
-
-    render();
-
-    window.addEventListener('scroll',checkScroll);
-
+    
     //Step3***偵測卷軸目前位置***
     function checkScroll() {
       //視窗頂端界線
@@ -217,16 +245,23 @@
       document.body.classList.add('disable-pointer');
     }
 
-    window.addEventListener('scroll',switchPointer);
-
     //Step4***阻擋滑鼠事件提升捲動效率***
-    let timer;
     function switchPointer() {
-      clearTimeout(timer);
-      timer = setTimeout(function() {
         document.body.classList.remove('disable-pointer');
-      }, 250);
     }
+
+    //監聽Nav上每個按鈕點擊事件
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', setScroll);
+    });
+
+    //執行動畫function
+    render();
+    
+    //執行捲動監聽
+    window.addEventListener('scroll',throttle(checkScroll,{wait:250, limit:1000}));
+    window.addEventListener('scroll',throttle(switchPointer, {wait:250}));
+
   </script>
 
   <style>

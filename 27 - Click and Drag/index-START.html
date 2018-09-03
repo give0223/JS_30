@@ -35,6 +35,20 @@
   </div>
 
 <script>
+  let items = document.querySelector('.items');
+  let startX;
+  items.addEventListener('mousedown',function (e) {
+    items.classList.add('active');
+    console.log(e);
+    startX = e.x;
+    console.log(startX);
+  });
+  items.addEventListener('mouseup',function (e) {
+    items.classList.remove('active');
+  });
+  items.addEventListener('mouseleave',function (e) {
+    items.classList.remove('active');
+  });
 </script>
 
   </body>
